@@ -14,11 +14,18 @@ outputs:
   token:
     description: Installation access token for the GitHub App
 runs:
-  using: docker
-  image: Dockerfile
-  args:
-    - ${{ inputs.private-key }}
-    - ${{ inputs.app-id }}
+  using: composite
+  steps:
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip' 
+    - name: Generete token
+      shell: bash
+      env: 
+        PRIVATE_KEY: ${{ inputs.private-key }}
+        APP_ID: ${{ inputs.app-id }}
+      run:  bash -x ${{ github.action_path }}/get-installation-access-token.sh
 author: Christer Edvartsen <christer.edvartsen@nav.no>
 branding:
   icon: unlock
